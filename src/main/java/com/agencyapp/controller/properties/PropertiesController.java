@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agencyapp.dto.ResponseObjectDTO;
@@ -98,11 +99,12 @@ public class PropertiesController {
 					.body(new ResponseObjectDTO("failed", "Cannot find property ", ""));
 		}
 	}
+
 	@PostMapping(value = "/properties/add")
 	public ResponseEntity<ResponseObjectDTO> addProperties(@RequestBody PropertiesEntity propertiesEntity) {
 		if (propertiesEntity != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(
-					new ResponseObjectDTO("ok", "Insert successfully", iPropertiesService.addProperties(propertiesEntity)));
+			return ResponseEntity.status(HttpStatus.OK).body(new ResponseObjectDTO("ok", "Insert successfully",
+					iPropertiesService.addProperties(propertiesEntity)));
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
 					.body(new ResponseObjectDTO("failed", "Cannot insert property", ""));
@@ -121,6 +123,7 @@ public class PropertiesController {
 					.body(new ResponseObjectDTO("failed", "Cannot update user id = " + id, ""));
 		}
 	}
+
 	@DeleteMapping(value = "/properties/delete/{id}")
 	public ResponseEntity<ResponseObjectDTO> deleteProperties(@PathVariable("id") int id) {
 		if (iPropertiesService.deleteProperties(id)) {
@@ -129,5 +132,49 @@ public class PropertiesController {
 			return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED)
 					.body(new ResponseObjectDTO("failed", "Cannot delete properties id = " + id, ""));
 		}
+	}
+
+	@GetMapping(value = "/properties/results")
+	public ResponseEntity<ResponseObjectDTO> getSearchProperties(@RequestParam("search_query") long search_query,
+			@RequestParam("sp") String nameSearch) {
+		if (nameSearch.equalsIgnoreCase("price")) {
+			List<PropertiesEntity> propertyfound = iPropertiesService.findByPrice(search_query);
+			if (propertyfound != null && propertyfound.size() > 0) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new ResponseObjectDTO("ok", "Querry successfully", propertyfound));
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body(new ResponseObjectDTO("failed", "Cannot find property ", ""));
+			}
+		}else if (nameSearch.equalsIgnoreCase("baths")) {
+			List<PropertiesEntity> propertyfound = iPropertiesService.findByBaths((int)search_query);
+			if (propertyfound != null && propertyfound.size() > 0) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new ResponseObjectDTO("ok", "Querry successfully", propertyfound));
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body(new ResponseObjectDTO("failed", "Cannot find property ", ""));
+			}
+		}else if (nameSearch.equalsIgnoreCase("beds")) {
+			List<PropertiesEntity> propertyfound = iPropertiesService.findByBeds((int)search_query);
+			if (propertyfound != null && propertyfound.size() > 0) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new ResponseObjectDTO("ok", "Querry successfully", propertyfound));
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body(new ResponseObjectDTO("failed", "Cannot find property ", ""));
+			}
+		}else if (nameSearch.equalsIgnoreCase("property_types")) {
+			List<PropertiesEntity> propertyfound = iPropertiesService.findByPropertyTypes((int)search_query);
+			if (propertyfound != null && propertyfound.size() > 0) {
+				return ResponseEntity.status(HttpStatus.OK)
+						.body(new ResponseObjectDTO("ok", "Querry successfully", propertyfound));
+			} else {
+				return ResponseEntity.status(HttpStatus.NOT_FOUND)
+						.body(new ResponseObjectDTO("failed", "Cannot find property ", ""));
+			}
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.body(new ResponseObjectDTO("failed", "Wrong param sp", ""));
 	}
 }

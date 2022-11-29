@@ -99,4 +99,22 @@ public class PropertiesServiceImpl implements IPropertiesService{
 		}
 	}
 
+	@Override
+	public List<PropertiesEntity> findByPrice(Long price) {
+		return propertiesDao.findByPropertyByPrice(price);
+	}
+
+	@Override
+	public List<PropertiesEntity> findByBaths(int baths) {
+		return propertiesDao.findByBaths(baths);
+	}
+	@Override
+	public List<PropertiesEntity> findByBeds(int beds) {
+		return propertiesDao.findByBeds(beds);
+	}
+	@Override
+	public List<PropertiesEntity> findByPropertyTypes(int propertyTypes) {
+		return propertiesDao.findByTypeId(propertyTypes);
+	}
+
 }
